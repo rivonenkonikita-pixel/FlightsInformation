@@ -1,10 +1,10 @@
 #include <iostream> //Библиотека для ввода вывода
 #include <fstream> //Библиотека для работы с файлами
-#include <iomanip>
-#include <cstdio>
-#include <cstring>
-#include <cctype>
-#include <limits>
+#include <iomanip> //Библиотека для форматирования вывода
+#include <cstdio> //Для функции sscanf
+#include <cstring> //Для strlen
+#include <cctype> //Библиотека для работы с символами
+#include <limits> //Содержит информацию о пределах типов данных,
 using namespace std;
 
 const int MAX_LINE_LEN = 1000; //Максимальная длина одной строки в файле
@@ -18,6 +18,7 @@ struct FlightInformation
     int countContainers; //Количество контейнеров
 };
 
+//Функция для выбора вырианта обработки данных из файла(игнорировать некорректные строки или нет)
 int ChooseOption()
 {
     cout << "Здравствуйте! Программа имеет 2 варианта обработки данных:" << endl;
@@ -39,6 +40,7 @@ int ChooseOption()
     return option;
 }
 
+//Вывод сообщений об ошибках
 void PrintErrorMessage(int code, const char* filename, int numberline = -1)
 {
     cout << "Ошибка";
@@ -111,6 +113,7 @@ void PrintErrorMessage(int code, const char* filename, int numberline = -1)
     }
 }
 
+//Чтение одной строки из файла, проверка на наличие ошибок и инициализация переменных структуры
 int ReadLine(ifstream& file, FlightInformation& flight, bool printline = false, int linenum=-1)
 {
     char line[MAX_LINE_LEN];
@@ -234,6 +237,7 @@ int ReadLine(ifstream& file, FlightInformation& flight, bool printline = false, 
     return 0;
 }
 
+//Вызов ReadLine для чтения всех строк из файла, заполнение массивов структур и индексов
 int ArrayCreate(const char* filename, FlightInformation*& flights, int*& indexArray, int& countRightLines, int var)
 {
     ifstream file(filename);
@@ -309,6 +313,7 @@ int ArrayCreate(const char* filename, FlightInformation*& flights, int*& indexAr
     return 0;
 }
 
+//Индексная сортировка методом «пузырька» в порядке убывания номеров рейсов
 void BubbleSort(FlightInformation* flights, int* flightsindex, int n)
 {
     for (int i=0; i<n-1; i++)
@@ -331,6 +336,7 @@ void BubbleSort(FlightInformation* flights, int* flightsindex, int n)
     }
 }
 
+//Определение суммарного количества контейнеров
 int TotalSumContainers(FlightInformation* flights, int n)
 {
     int sum = 0;
@@ -341,6 +347,7 @@ int TotalSumContainers(FlightInformation* flights, int n)
     return sum;
 }
 
+//Вывод отсортированных данных и суммарного количества контейнеров
 void PrintTable(FlightInformation* flights, int* indexes, int n, int totalContainers)
 {
     cout << endl << "================================= Отсортированная таблица ==================================" << endl;
@@ -363,6 +370,7 @@ void PrintTable(FlightInformation* flights, int* indexes, int n, int totalContai
     cout << "============================================================================================" << endl;
 }
 
+//main, в котором вызываются функции
 int main()
 {   
     setlocale(LC_ALL, "Russian");
