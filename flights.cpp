@@ -10,6 +10,7 @@ using namespace std;
 const int MAX_LINE_LEN = 1000; //Максимальная длина одной строки в файле
 const int MAX_TAIL_LEN = 100; //Максимальная длина бортового номера
 
+//Структура для хранения данных
 struct FlightInformation
 {
     int numberFlight; //Номер рейса
@@ -17,6 +18,58 @@ struct FlightInformation
     double weight; //Вес груза
     int countContainers; //Количество контейнеров
 };
+
+//Функция для выбора вырианта обработки данных из файла(игнорировать некорректные строки или нет)
+int ChooseOption();
+//Вывод сообщений об ошибках
+void PrintErrorMessage(int code, const char* filename, int numberline = -1);
+//Чтение одной строки из файла, проверка на наличие ошибок и инициализация переменных структуры
+int ReadLine(ifstream& file, FlightInformation& flight, bool printline = false, int linenum = -1);
+//Вызов ReadLine для чтения всех строк из файла, заполнение массивов структур и индексов
+int ArrayCreate(const char* filename, FlightInformation*& flights, int*& indexArray, int& countRightLines, int var);
+//Индексная сортировка методом «пузырька» в порядке убывания номеров рейсов
+void BubbleSort(FlightInformation* flights, int* flightsindex, int n);
+//Определение суммарного количества контейнеров
+int TotalSumContainers(FlightInformation* flights, int n);
+//Вывод отсортированных данных и суммарного количества контейнеров
+void PrintTable(FlightInformation* flights, int* indexes, int n, int totalContainers);
+
+//main, в котором вызываются функции
+int main()
+{   
+    setlocale(LC_ALL, "Russian");
+    int option = ChooseOption();
+
+    const char* filename = "data.txt";
+    FlightInformation* flights = nullptr;
+    int* flightsindex = nullptr;
+    int countRightLines = 0;
+    cout << "Чтение данных из файла" << endl;
+    int ERROR = ArrayCreate(filename, flights, flightsindex, countRightLines, option);
+    if (ERROR != 0) {
+        if (ERROR==18 || ERROR==19)
+        {
+            PrintErrorMessage(ERROR, filename);
+        }
+        return 1;
+    }
+
+    cout << "Количество корректных строк: " << countRightLines << endl;
+    if (countRightLines>0)
+    {
+        BubbleSort(flights, flightsindex, countRightLines);
+        int totalSumContainers = TotalSumContainers(flights, countRightLines);
+        PrintTable(flights, flightsindex, countRightLines, totalSumContainers);
+    }
+    else
+    {
+        cout << "Данные невозможно обработать" << endl;
+    }
+
+    delete[] flights;
+    delete[] flightsindex;
+    return 0;
+}
 
 //Функция для выбора вырианта обработки данных из файла(игнорировать некорректные строки или нет)
 int ChooseOption()
@@ -41,7 +94,7 @@ int ChooseOption()
 }
 
 //Вывод сообщений об ошибках
-void PrintErrorMessage(int code, const char* filename, int numberline = -1)
+void PrintErrorMessage(int code, const char* filename, int numberline)
 {
     cout << "Ошибка";
     if (numberline != -1 && code != 19)
@@ -114,7 +167,7 @@ void PrintErrorMessage(int code, const char* filename, int numberline = -1)
 }
 
 //Чтение одной строки из файла, проверка на наличие ошибок и инициализация переменных структуры
-int ReadLine(ifstream& file, FlightInformation& flight, bool printline = false, int linenum=-1)
+int ReadLine(ifstream& file, FlightInformation& flight, bool printline, int linenum)
 {
     char line[MAX_LINE_LEN];
     int lenline = 0;
@@ -368,41 +421,4 @@ void PrintTable(FlightInformation* flights, int* indexes, int n, int totalContai
     cout << "============================================================================================" << endl;
     cout << "Суммарное количество контейнеров: " << totalContainers << endl;
     cout << "============================================================================================" << endl;
-}
-
-//main, в котором вызываются функции
-int main()
-{   
-    setlocale(LC_ALL, "Russian");
-    int option = ChooseOption();
-
-    const char* filename = "data.txt";
-    FlightInformation* flights = nullptr;
-    int* flightsindex = nullptr;
-    int countRightLines = 0;
-    cout << "Чтение данных из файла" << endl;
-    int ERROR = ArrayCreate(filename, flights, flightsindex, countRightLines, option);
-    if (ERROR != 0) {
-        if (ERROR==18 || ERROR==19)
-        {
-            PrintErrorMessage(ERROR, filename);
-        }
-        return 1;
-    }
-
-    cout << "Количество корректных строк: " << countRightLines << endl;
-    if (countRightLines>0)
-    {
-        BubbleSort(flights, flightsindex, countRightLines);
-        int totalSumContainers = TotalSumContainers(flights, countRightLines);
-        PrintTable(flights, flightsindex, countRightLines, totalSumContainers);
-    }
-    else
-    {
-        cout << "Данные невозможно обработать" << endl;
-    }
-
-    delete[] flights;
-    delete[] flightsindex;
-    return 0;
 }
