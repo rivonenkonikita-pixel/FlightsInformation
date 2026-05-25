@@ -214,7 +214,7 @@ void PrintErrorMessage(int code, const char* filename, int numberline)
             cout << "строка превышает максимальную длину (" << MAX_LINE_LEN-1 << " символов)" << endl;
             break;
         case 21:
-            cout << "номер рейса уже встречался ранее" << endl;
+            cout << "такой номер рейса уже встречался ранее" << endl;
             break;
         default:
             cout << endl;
@@ -294,11 +294,11 @@ int ReadLine(ifstream& file, FlightInformation& flight, bool printline, int line
     {
         return 9;
     }
-    if (strlen(numtail)!=7) //буква Б занимает 2 байта, поэтому длина бортового номера - 7
+    if (strlen(numtail)!=7) //Буква Б занимает 2 байта, поэтому длина бортового номера - 7
     {
         return 10;
     }
-    if (!(numtail[0] == (char)0xD0 && numtail[1] == (char)0x91))
+    if (!(numtail[0] == (char)0xD0 && numtail[1] == (char)0x91)) //Проверка, что первый символ 'Б'
     {
         return 11;
     }
