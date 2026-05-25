@@ -91,7 +91,6 @@ void PrintTable(
 //main, в котором вызываются функции
 int main()
 {   
-    setlocale(LC_ALL, "Russian");
     int option = ChooseOption();
 
     FlightInformation* flights = nullptr;
