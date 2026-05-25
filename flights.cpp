@@ -1,3 +1,24 @@
+/*********************************************************************************************
+* Project Type: win32_console_Application                                                    *
+* Project Name: C:\Users\fe1nfly\OneDrive\Documents\IntroductoryPractice\FlightsInformation  *
+* File Name: flights.cpp                                                                     *
+* Language: C++, Microsoft  Visual Studio Code                                               *                               *
+* Programmer: Ривоненко Никита Павлович                                                      *
+* Modified by:                                                                               *
+* Created: 04.05.2026                                                                        *
+* Last Revision: 25.05.2026                                                                  *
+* Comment:                                                                                   *
+* Тема:«Структуры»                                                                           *
+* 1) подготовить программу, сортирующую записи с использованием индексной сортировки методом *
+*    «пузырька» в порядке убывания номеров рейсов; определить суммарное количество           *
+*    контейнеров; результаты печатать в виде таблицы;                                        *
+* 2) обеспечить входной контроль номера рейса, бортового номера, веса груза и количества     *
+*    контейнеров, выполнить отладку и тестирование.                                          *
+* Чтение данных их файла производить с использованием функций ввода/вывода языка С++.        *
+* Алгоритм должен быть параметризован; обмен данными с подпрограммой должен осуществляться   *
+* только через параметры; исходные  данные  хранятся в отдельном файле.                      *
+*********************************************************************************************/
+
 #include <iostream> //Библиотека для ввода вывода
 #include <fstream> //Библиотека для работы с файлами
 #include <iomanip> //Библиотека для форматирования вывода
@@ -7,6 +28,7 @@
 #include <limits> //Содержит информацию о пределах типов данных,
 using namespace std;
 
+const char* FILE_NAME = "data.txt"; //Имя файла
 const int MAX_LINE_LEN = 1000; //Максимальная длина одной строки в файле
 const int MAX_TAIL_LEN = 100; //Максимальная длина бортового номера
 
@@ -17,22 +39,54 @@ struct FlightInformation
     char numberTail[MAX_TAIL_LEN]; //Бортовой номер
     double weight; //Вес груза
     int countContainers; //Количество контейнеров
-};
+}; //FlightInformation
 
 //Функция для выбора варианта обработки данных из файла(игнорировать некорректные строки или нет)
 int ChooseOption();
 //Вывод сообщений об ошибках
-void PrintErrorMessage(int code, const char* filename, int numberline = -1);
+void PrintErrorMessage(
+    int code, //Код ошибки
+    const char* filename, //Имя файла
+    int numberline = -1 //Номер строки
+); //PrintErrorMessage
+
 //Чтение одной строки из файла, проверка на наличие ошибок и инициализация переменных структуры
-int ReadLine(ifstream& file, FlightInformation& flight, bool printline = false, int linenum = -1);
+int ReadLine(
+    ifstream& file, //Поток чтения из файла
+    FlightInformation& flight, //Структура для заполнения данными из строки
+    bool printline = false, //Флаг вывода содержимого строки на экран
+    int linenum = -1 //Номер строки
+); //ReadLine
+
 //Вызов ReadLine для чтения всех строк из файла, заполнение массивов структур и индексов
-int ArrayCreate(const char* filename, FlightInformation*& flights, int*& indexArray, int& countRightLines, int var);
+int ArrayCreate(
+    const char* filename, //Имя файла
+    FlightInformation*& flights, //Указатель на массив структур
+    int*& indexArray, //Указатель на массив индексов
+    int& countRightLines, //Количество корректных строк
+    int var //Вариант обработки данных из файла
+); //ArrayCreate
+
 //Индексная сортировка методом «пузырька» в порядке убывания номеров рейсов
-void BubbleSort(FlightInformation* flights, int* flightsindex, int n);
+void BubbleSort(
+    FlightInformation* flights, //Массив структур
+    int* flightsindex, //Массив индексов
+    int n //Количество элементов в массиве
+); //BubbleSort
+
 //Определение суммарного количества контейнеров
-int TotalSumContainers(FlightInformation* flights, int n);
+int TotalSumContainers(
+    FlightInformation* flights, //Массив структур
+    int n //Количество элементов в массиве
+); //TotalSumContainers
+
 //Вывод отсортированных данных и суммарного количества контейнеров
-void PrintTable(FlightInformation* flights, int* indexes, int n, int totalContainers);
+void PrintTable(
+    FlightInformation* flights, //Массив структур
+    int* indexes, //Массив индексов
+    int n, //Количество элементов в массиве
+    int totalContainers //Суммарное количество контейнеров
+); //PrintTable
 
 //main, в котором вызываются функции
 int main()
@@ -40,16 +94,15 @@ int main()
     setlocale(LC_ALL, "Russian");
     int option = ChooseOption();
 
-    const char* filename = "data.txt";
     FlightInformation* flights = nullptr;
     int* flightsindex = nullptr;
     int countRightLines = 0;
     cout << "Чтение данных из файла" << endl;
-    int ERROR = ArrayCreate(filename, flights, flightsindex, countRightLines, option);
+    int ERROR = ArrayCreate(FILE_NAME, flights, flightsindex, countRightLines, option);
     if (ERROR != 0) {
         if (ERROR==18 || ERROR==19)
         {
-            PrintErrorMessage(ERROR, filename);
+            PrintErrorMessage(ERROR, FILE_NAME);
         }
         return 1;
     }
@@ -69,7 +122,7 @@ int main()
     delete[] flights;
     delete[] flightsindex;
     return 0;
-}
+} //main
 
 //Функция для выбора варианта обработки данных из файла(игнорировать некорректные строки или нет)
 int ChooseOption()
@@ -132,10 +185,10 @@ void PrintErrorMessage(int code, const char* filename, int numberline)
             cout << "номер рейса не является натуральным числом"<< endl;
             break;
         case 10:
-            cout << "бортовой номер слишком короткий"<< endl;
+            cout << "Бортовой номер должен быть формата Б-XXXX"<< endl;
             break;
         case 11:
-            cout << "первый символ бортового номера не является заглавной русской буквой"<< endl;
+            cout << "первый символ бортового номера не буква 'Б'"<< endl;
             break;
         case 12:
             cout << "второй символ бортового номера не '-'"<< endl;
@@ -161,6 +214,9 @@ void PrintErrorMessage(int code, const char* filename, int numberline)
         case 20:
             cout << "строка превышает максимальную длину (" << MAX_LINE_LEN-1 << " символов)" << endl;
             break;
+        case 21:
+            cout << "номер рейса уже встречался ранее" << endl;
+            break;
         default:
             cout << endl;
     }
@@ -171,8 +227,12 @@ int ReadLine(ifstream& file, FlightInformation& flight, bool printline, int line
 {
     char line[MAX_LINE_LEN];
     int lenline = 0;
-     if (!file.getline(line, MAX_LINE_LEN)) {
-        if (file.eof()) return -1;
+    if (!file.getline(line, MAX_LINE_LEN)) 
+    {
+        if (file.eof())
+        {
+            return -1;
+        }
         file.clear();
         file.ignore(numeric_limits<streamsize>::max(), '\n');
         return 20;
@@ -212,7 +272,7 @@ int ReadLine(ifstream& file, FlightInformation& flight, bool printline, int line
     int numflight, countcont, countsymb;
     char numtail[MAX_TAIL_LEN];
     double wght;
-    int result=sscanf(line, "%d %99s %lf %d %n", &numflight, numtail, &wght, &countcont, &countsymb);
+    int result=sscanf(line, "%d %s %lf %d %n", &numflight, numtail, &wght, &countcont, &countsymb);
     if (result!=4)
     {
         if (result < 1)
@@ -240,21 +300,21 @@ int ReadLine(ifstream& file, FlightInformation& flight, bool printline, int line
     }
     if (numflight<=0)
     {
-        return 9;   
+        return 9;
     }
-    if (strlen(numtail)<3)
+    if (strlen(numtail)!=7) //буква Б занимает 2 байта, поэтому длина бортового номера - 7
     {
         return 10;
     }
-    if (!((numtail[0]>='А' && numtail[0]<='Я') || numtail[0]=='Ё'))
+    if (!(numtail[0] == (char)0xD0 && numtail[1] == (char)0x91))
     {
         return 11;
     }
-    if (numtail[1]!='-')
+    if (numtail[2]!='-')
     {
         return 12;
     }
-    for (int i = 2; i < strlen(numtail); i++)
+    for (int i = 3; i < 7; i++)
     {
         if (!isdigit(numtail[i]))
         {
@@ -299,7 +359,8 @@ int ArrayCreate(const char* filename, FlightInformation*& flights, int*& indexAr
         file.close();
         return 18;
     }
-    int countLine = 0;
+    FlightInformation* tempFlights = nullptr;
+    int tempCount = 0;
     int codeError = 0;
     FlightInformation structura;
     int numberLine = 0;
@@ -309,60 +370,74 @@ int ArrayCreate(const char* filename, FlightInformation*& flights, int*& indexAr
         if (codeError == -1)
             break;
         numberLine++;
+        
         if (codeError == 0)
         {
-            if (var!=2)
+            bool duplicate = false;
+            for (int i = 0; i < tempCount; i++)
             {
-                cout << "В строке №" << numberLine << " ошибок не обнаружено" << endl;
+                if (tempFlights[i].numberFlight == structura.numberFlight)
+                {
+                    duplicate = true;
+                    break;
+                }
             }
-            countLine++;
+            if (!duplicate)
+            {
+                if (var != 2)
+                {
+                    cout << "В строке №" << numberLine << " ошибок не обнаружено" << endl;
+                }
+                FlightInformation* newTemp = new FlightInformation[tempCount + 1];
+                for (int i = 0; i < tempCount; i++)
+                {
+                    newTemp[i] = tempFlights[i];
+                }
+                newTemp[tempCount] = structura;
+                delete[] tempFlights;
+                tempFlights = newTemp;
+                tempCount++;
+            }
+            else
+            {
+                PrintErrorMessage(21, filename, numberLine);
+                if (var == 2)
+                {
+                    file.close();
+                    delete[] tempFlights;
+                    return 21;
+                }
+            }
         }
         else
         {
             PrintErrorMessage(codeError, filename, numberLine);
-            if (var==2)
+            if (var == 2)
             {
                 file.close();
+                delete[] tempFlights;
                 return codeError;
             }
         }
     }
     file.close();
-    if (countLine == 0)
+    
+    if (tempCount == 0)
     {
         flights = nullptr;
         indexArray = nullptr;
-        countRightLines = countLine;
+        countRightLines = 0;
         return 19;
     }
-    flights=new FlightInformation[countLine];
-    indexArray=new int[countLine];
-    ifstream file2(filename);
-    if (!file2)
+    flights = new FlightInformation[tempCount];
+    indexArray = new int[tempCount];
+    for (int i = 0; i < tempCount; i++)
     {
-        delete[] flights;
-        delete[] indexArray;
-        return 18;
+        flights[i] = tempFlights[i];
+        indexArray[i] = i;
     }
-    int index = 0;
-    numberLine = 0;
-    while (index<countLine)
-    {
-        codeError = ReadLine(file2, structura);
-        if (codeError==-1)
-        {
-            break;
-        }
-        numberLine++;
-        if (codeError==0)
-        {
-            flights[index]=structura;
-            indexArray[index]=index;
-            index++;
-        }
-    }
-    file2.close();
-    countRightLines=countLine;
+    countRightLines = tempCount;
+    delete[] tempFlights;
     return 0;
 }
 
@@ -405,15 +480,15 @@ void PrintTable(FlightInformation* flights, int* indexes, int n, int totalContai
 {
     cout << endl << "================================= Отсортированная таблица ==================================" << endl;
     cout << "+------------------+------------------------+-------------------+--------------------------+" << endl;
-    cout << "| "<< left << setw(15) << "Номер рейса"
-         << "  | " << setw(22) << "Бортовой номер"
-         << " | " << setw(17) << "Вес груза"
-         << " | " << setw(24) << " Кол-во контейнеров" << " |" << endl;
+    cout << "| "<< left << setw(25) << "Номер рейса"
+         << "  | " << setw(35) << "Бортовой номер"
+         << " | " << setw(25) << "Вес груза"
+         << " | " << setw(40) << " Кол-во контейнеров" << " |" << endl;
     cout << "+------------------+------------------------+-------------------+--------------------------+" << endl;
     for (int i = 0; i < n; ++i) {
         FlightInformation& f = flights[indexes[i]];
         cout << "| " << left << setw(16) << f.numberFlight
-             << " | " << setw(21) << f.numberTail
+             << " | " << setw(22) << f.numberTail
              << "  | " << setw(17) << fixed << setprecision(3) << f.weight
              << " | " << setw(24) << f.countContainers << " |" << endl;
         cout << "+------------------+------------------------+-------------------+--------------------------+" << endl;
