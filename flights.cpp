@@ -2,7 +2,7 @@
 * Project Type: win32_console_Application                                                    *
 * Project Name: C:\Users\fe1nfly\OneDrive\Documents\IntroductoryPractice\FlightsInformation  *
 * File Name: flights.cpp                                                                     *
-* Language: C++, Microsoft  Visual Studio Code                                               *                               *
+* Language: C++, Microsoft  Visual Studio Code                                               *
 * Programmer: Ривоненко Никита Павлович                                                      *
 * Modified by:                                                                               *
 * Created: 04.05.2026                                                                        *
