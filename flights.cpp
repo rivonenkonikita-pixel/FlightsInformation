@@ -241,13 +241,6 @@ int ReadLine(ifstream& file, FlightInformation& flight, bool printline, int line
     {
         cout << "Строка №" << linenum+1 << ": \"" << line << "\"" << endl;
     }
-    for (int i = 0; i < MAX_LINE_LEN; i++)
-    {
-        if (line[i]=='.')
-        {
-            line[i]=',';
-        }
-    }
     for (int i=0; line[i]!='\0'; i++)
     {
         lenline++;
