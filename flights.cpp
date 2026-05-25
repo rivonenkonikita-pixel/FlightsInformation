@@ -28,7 +28,7 @@
 #include <limits> //Содержит информацию о пределах типов данных,
 using namespace std;
 
-const char* FILE_NAME = "data03.txt"; //Имя файла
+const char* FILE_NAME = "data04.txt"; //Имя файла
 const int MAX_LINE_LEN = 1000; //Максимальная длина одной строки в файле
 const int MAX_TAIL_LEN = 100; //Максимальная длина бортового номера
 
