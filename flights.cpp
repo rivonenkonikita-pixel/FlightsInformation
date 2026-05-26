@@ -140,7 +140,6 @@ int ChooseOption()
         cout << "Такого варианта обработки данных нет. Повторите попытку, пожалуйста" << endl;
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        cout << endl;
     } while (true);
     cout << endl << "Выбран вариант " << option << endl << endl;
     return option;
@@ -235,7 +234,6 @@ int ReadLine(ifstream& file, FlightInformation& flight, bool printline, int line
         }
         file.clear();
         file.ignore(numeric_limits<streamsize>::max(), '\n');
-        cout << endl;
         return 20;
     }
     if (printline)
