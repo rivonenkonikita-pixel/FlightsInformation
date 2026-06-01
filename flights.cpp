@@ -23,7 +23,6 @@
 #include <fstream> //Библиотека для работы с файлами
 #include <iomanip> //Библиотека для форматирования вывода
 #include <cstdio> //Для функции sscanf
-#include <cstring> //Для strlen
 #include <cctype> //Библиотека для работы с символами
 #include <limits> //Содержит информацию о пределах типов данных,
 using namespace std;
@@ -294,9 +293,14 @@ int ReadLine(ifstream& file, FlightInformation& flight, bool printline, int line
     {
         return 9;
     }
-    if (strlen(numtail)!=7) //Буква Б занимает 2 байта, поэтому длина бортового номера - 7
+    int lenNumTail = 0;
+    while (numtail[lenNumTail] != '\0')
     {
-        return 10;
+        lenNumTail++;
+    }
+    if (lenNumTail != 7) //Буква Б занимает 2 байта, поэтому длина бортового номера - 7
+    { 
+        return 10; 
     }
     if (!(numtail[0] == (char)0xD0 && numtail[1] == (char)0x91)) //Проверка, что первый символ 'Б'
     {
