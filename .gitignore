@@ -68,3 +68,6 @@ vcpkg_installed/
 Testing/
 .cache/
 *.json
+.vs/FlightsInformation/FileContentIndex/dc1b3853-49a0-4f09-8b39-398326911d9f.vsidx
+.gitignore
+.gitignore
